@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Task Manager 🐙
 
 A desktop task management application built with Qt6 and C++. Helps you stay organized with features for managing tasks, deadlines, and reminders.
@@ -74,3 +75,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 - Create an issue for bug reports or feature requests
 - Submit pull requests to contribute directly
+=======
