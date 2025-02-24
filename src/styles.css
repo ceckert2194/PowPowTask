@@ -244,5 +244,35 @@ li:before {
 }
 
 .list-screen {
-  padding: 20px;
+  padding: 2rem;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+@media (prefers-color-scheme: dark) {
+  .list-screen {
+    background-color: #2d3436;
+    color: #f8f9fa;
+  }
+}
+
+#start-list-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+  justify-content: space-evenly;
+}
+
+#start-list-container-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }

@@ -1,62 +1,41 @@
-import { invoke } from "@tauri-apps/api/core";
+import { CreateListModal } from "./components/CreateListModal";
+import { LoadLists } from "./components/LoadLists";
+import { saveList } from './components/SaveList';
+import { checkListDir } from './components/CheckListDir';
 
-let greetInputEl: HTMLInputElement | null;
-let greetMsgEl: HTMLElement | null;
-
-async function greet() {
-  if (greetMsgEl && greetInputEl) {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    greetMsgEl.textContent = await invoke("greet", {
-      name: greetInputEl.value,
-    });
-  }
+async function initializeApp() {
+  await checkListDir();
 }
 
-window.addEventListener("DOMContentLoaded", () => {
-  greetInputEl = document.querySelector("#greet-input");
-  greetMsgEl = document.querySelector("#greet-msg");
-  document.querySelector("#greet-form")?.addEventListener("submit", (e) => {
-    e.preventDefault();
-    greet();
-  });
-});
+const listLoader = new LoadLists();
 
 document.querySelector("#start-list")?.addEventListener("click", () => {
-  // Create and show the modal dialog
-  const modal = document.createElement("div");
-  modal.className = "modal";
-  modal.innerHTML = `
-    <div class="modal-content">
-      <h2>Create New List</h2>
-      <input type="text" id="list-name-input" placeholder="Enter list name">
-      <div class="modal-buttons">
-        <button id="cancel-list">Cancel</button>
-        <button id="confirm-list">Create</button>
-      </div>
-    </div>
-  `;
-
-  document.body.appendChild(modal);
-
-  // Handle modal interactions
-  const listNameInput = modal.querySelector("#list-name-input") as HTMLInputElement;
-  
-  modal.querySelector("#cancel-list")?.addEventListener("click", () => {
-    document.body.removeChild(modal);
-  });
-
-  modal.querySelector("#confirm-list")?.addEventListener("click", () => {
-    const listName = listNameInput.value.trim();
-    if (listName) {
-      // Navigate to the list screen
+  new CreateListModal(async (listName: string) => {
+    const success = await saveList(listName);
+    if (success) {
       showListScreen(listName);
-      document.body.removeChild(modal);
+    } else {
+      alert('Failed to create list');
     }
   });
 });
 
-function showListScreen(listName: string) {
-  const mainContent = document.querySelector("#main-content") as HTMLElement;
+document.querySelector("#open-list")?.addEventListener("click", () => {
+  new CreateListModal((listName: string) => {
+    showListScreen(listName);
+  });
+});
+
+// To load an existing list:
+async function showListScreen(listName: string) {
+  const list = await listLoader.loadListFromFile(listName);
+  if (!list) {
+    alert('Failed to load list');
+    return;
+  }
+
+  // Hide current content
+  const mainContent = document.querySelector<HTMLElement>("#main-content");
   if (mainContent) {
     mainContent.style.display = "none";
   }
@@ -65,9 +44,11 @@ function showListScreen(listName: string) {
   const listScreen = document.createElement("div");
   listScreen.className = "list-screen";
   listScreen.innerHTML = `
-    <h1>${listName}</h1>
+    <h1>${list.header.name}</h1>
     <div class="list-content">
-      <!-- Add your list content here -->
+      <ul>
+        ${list.body.items.map(item => `<li>${item}</li>`).join('')}
+      </ul>
     </div>
     <button id="back-to-main">Back</button>
   `;
@@ -82,3 +63,8 @@ function showListScreen(listName: string) {
     }
   });
 }
+
+// Call initializeApp when the app loads
+document.addEventListener('DOMContentLoaded', () => {
+  initializeApp().catch(console.error);
+});
