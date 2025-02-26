@@ -129,8 +129,14 @@ button {
     background-color: #2d3436;
   }
 
-  h1, h2 {
+  h1 {
     color: #f8f9fa;
+    margin-bottom: 4rem;
+  }
+
+  h2 {
+    color: #f8f9fa;
+    margin-bottom: 1.5rem;
   }
 
   p, li {
@@ -159,7 +165,8 @@ ul {
   text-align: left;
 }
 
-li {
+/* Apply checkmark only to main content lists, not task lists */
+#main-content li {
   margin-bottom: 0px;
   padding: 0rem 0rem;
   color: #636e72;
@@ -168,11 +175,20 @@ li {
   color: #c7f2ff;
 }
 
-li:before {
+#main-content li:before {
   content: "✓";
   position: absolute;
   left: 0;
   color: #00b894;
+}
+
+/* Task list items should not have the checkmark */
+.items-list li {
+  padding-left: 0;
+}
+
+.items-list li:before {
+  content: none;
 }
 
 .modal {
@@ -244,35 +260,396 @@ li:before {
 }
 
 .list-screen {
-  padding: 2rem;
+  padding: 1.5rem;
   width: 100%;
   min-height: 100vh;
-  background-color: #f8f9fa;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9f7f7 100%);
   position: fixed;
   top: 0;
   left: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow-y: auto;
+  animation: fadeIn 0.3s ease-in-out;
+  z-index: 100;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.list-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  width: 100%;
+  max-width: 700px;
+  position: relative;
+  padding-bottom: 1rem;
+}
+
+.list-header::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 3px;
+  background-color: #00b894;
+  border-radius: 3px;
+}
+
+.list-header h1 {
+  font-size: 2.2rem;
+  margin-bottom: 0.5rem;
+  color: #2d3436;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.list-meta {
+  color: #636e72;
+  font-size: 0.85rem;
+  margin-top: 0.2rem;
+  font-style: italic;
+}
+
+.list-content {
+  width: 60%;
+  max-width: 700px;
+  margin-bottom: 1.5rem;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(10px);
+}
+
+.add-item-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.add-item-form input {
+  flex: 1;
+  padding: 0.7rem 1rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.add-item-form input:focus {
+  border-color: #00b894;
+  box-shadow: 0 0 0 2px rgba(0, 184, 148, 0.2);
+}
+
+.add-item-form button {
+  padding: 0.7rem 1.2rem;
+  font-size: 0.95rem;
+  margin-top: 0;
+}
+
+.items-container {
+  margin-top: 1rem;
+}
+
+.empty-list-message {
+  text-align: center;
+  color: #636e72;
+  font-style: italic;
+  padding: 1.5rem;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  border: 1px dashed #dfe6e9;
+}
+
+.items-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.7rem 1rem;
+  margin-bottom: 0.5rem;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+  transition: box-shadow 0.3s ease;
+  border-left: 3px solid #00b894;
+  animation: slideIn 0.6s ease-out forwards;
+  animation-play-state: running;
+  position: relative;
+  will-change: transform, box-shadow;
+}
+
+/* Only apply the slideIn animation once when the item is first created */
+.list-item.rendered {
+  animation: none;
+}
+
+@keyframes slideIn {
+  from { 
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Create a separate hover effect that doesn't interfere with checkbox clicks */
+.list-item:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Use transform on a pseudo-element for the scale effect */
+.list-item:hover::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: transparent;
+  border-radius: 8px;
+  pointer-events: none;
+  transform: scale(1.02);
+  z-index: -1;
+}
+
+.list-item.completed {
+  border-left-color: #b2bec3;
+  background-color: #f8f9fa;
+}
+
+.item-content {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex: 1;
+}
+
+.item-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #00b894;
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+  transition: background-color 0.2s ease;
+  z-index: 2;
+}
+
+.item-checkbox:checked {
+  background-color: #00b894;
+}
+
+.item-checkbox:checked::after {
+  content: "✓";
+  position: absolute;
+  color: white;
+  font-size: 12px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.item-text {
+  font-size: 0.95rem;
+  color: #2d3436;
+  transition: all 0.2s ease;
+}
+
+.list-item.completed .item-text {
+  text-decoration: line-through;
+  color: #b2bec3;
+}
+
+.delete-item-btn {
+  background-color: transparent;
+  color: #ff7675;
+  border: none;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.85rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 0;
+  box-shadow: none;
+  opacity: 0.7;
+}
+
+.delete-item-btn:hover {
+  background-color: #fff0f0;
+  color: #e74c3c;
+  opacity: 1;
+  transform: none;
+  box-shadow: none;
+}
+
+.list-footer {
+  margin-top: 1.5rem;
+  width: 100%;
+  max-width: 700px;
+  display: flex;
+  justify-content: center;
+}
+
+.secondary-btn {
+  background-color: #636e72;
+  padding: 0.7rem 1.5rem;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.secondary-btn:hover {
+  background-color: #4a5568;
 }
 
 @media (prefers-color-scheme: dark) {
   .list-screen {
-    background-color: #2d3436;
+    background: linear-gradient(135deg, #2d3436 0%, #232a2d 100%);
+  }
+  
+  .list-header h1 {
     color: #f8f9fa;
+  }
+  
+  .list-content {
+    background-color: rgba(45, 52, 54, 0.8);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  .list-item {
+    background-color: #232a2d;
+    border-left-color: #71ffe3;
+  }
+  
+  .list-item.completed {
+    background-color: #232a2d41;
+    border-left-color: #636e72;
+  }
+  
+  .item-text {
+    color: #f8f9fa;
+  }
+  
+  .list-item.completed .item-text {
+    color: #b2bec3;
+  }
+  
+  .empty-list-message {
+    background-color: rgba(45, 52, 54, 0.5);
+    border-color: #4a5568;
+  }
+  
+  .add-item-form input {
+    background-color: #1e2527;
+    border-color: #4a5568;
+    color: #f8f9fa;
+  }
+  
+  .delete-item-btn:hover {
+    background-color: rgba(231, 76, 60, 0.2);
   }
 }
 
-#start-list-container {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 1rem;
-  justify-content: space-evenly;
+/* Loading View Styles */
+.loading-container {
+  text-align: center;
+  padding: 2rem;
+  margin: 2rem auto;
+  max-width: 500px;
 }
 
-#start-list-container-item {
+.loading-spinner {
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(0, 184, 148, 0.3);
+  border-radius: 50%;
+  border-top-color: #00b894;
+  animation: spin 1s ease-in-out infinite;
+  margin: 1.5rem auto;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* List Selector Styles */
+.list-selector-container {
   display: flex;
-  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
   align-items: center;
+  width: 60%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.list-dropdown {
+  flex: 1;
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #dfe6e9;
+  background-color: #ffffff;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300b894' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1.8em;
+  padding-right: 2.5rem;
+}
+
+.list-dropdown:focus {
+  border-color: #00b894;
+  box-shadow: 0 0 0 2px rgba(0, 184, 148, 0.2);
+  outline: none;
+}
+
+.list-dropdown option {
+  padding: 0.5rem;
+}
+
+.lists-container {
+  margin: 2rem auto;
+  max-width: 600px;
+  width: 100%;
+}
+
+.list-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .list-dropdown {
+    background-color: #1e2527;
+    border-color: #4a5568;
+    color: #f8f9fa;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2371ffe3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  }
+  
+  .list-dropdown option {
+    background-color: #232a2d;
+  }
 }

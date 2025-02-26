@@ -1,13 +1,11 @@
-import { create, BaseDirectory, writeTextFile } from '@tauri-apps/plugin-fs';
-import { join, appDataDir } from '@tauri-apps/api/path';
+import { BaseDirectory, writeTextFile } from '@tauri-apps/plugin-fs';
 import { List } from './types/List';
 
 export async function saveList(listName: string): Promise<boolean> {
   try {
-    const listFilePath = await join('lists', `${listName}.json`);
-    await create(listFilePath, { baseDir: BaseDirectory.AppData });
-
-    // write an empty json object to the file
+    const listFilePath = `lists/${listName}.json`;
+    
+    // Create an empty list object
     const list: List = {
       header: {
         name: listName,
@@ -21,10 +19,11 @@ export async function saveList(listName: string): Promise<boolean> {
     };
 
     const jsonList = JSON.stringify(list);
-    const basePath = await appDataDir();
-    const fPath = basePath + "\\" + listFilePath;
-
-    await writeTextFile(fPath, jsonList);
+    
+    // Write directly to the AppData directory using BaseDirectory
+    await writeTextFile(listFilePath, jsonList, { 
+      baseDir: BaseDirectory.AppData 
+    });
 
     return true;
   } catch (error) {

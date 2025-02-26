@@ -11,30 +11,50 @@
   <body>
     <main id="main-content" class="container">
       <h1>Welcome to PowPowTask!</h1>
-      <p>This is a task management application that helps you by:
+      <!-- <p>This is a task management application that helps you by:
         <ul>
-          <li>Mananging your tasks</li>
+          <li>Managing your tasks</li>
           <li>Setting deadlines</li>
           <li>Creating reminders</li>
           <li>Getting notifications</li>
           <li>Sorting and filtering tasks</li>
           <li>And more!</li>
         </ul>
-      </p>
+      </p> -->
 
-      <div id="start-list-container">
-        <div id="start-list-container-item">      
-          <h2>Get Started</h2>
-          <button id="start-list">Start a List</button>
-        </div>
-
-        <div id="start-list-container-item">      
-          <h2>Open a List</h2>
-          <button id="open-list">Open a List</button>
+      <!-- Loading view shown during initialization -->
+      <div id="loading-view">
+        <div class="loading-container">
+          <h2>Loading...</h2>
+          <div class="loading-spinner"></div>
+          <p>Just a moment while we get everything ready</p>
         </div>
       </div>
 
+      <!-- View shown when no lists exist -->
+      <div id="no-lists-view" style="display: none;">
+        <div class="empty-state">
+          <h2>Get Started</h2>
+          <p>You don't have any lists yet. Create your first list to get started!</p>
+          <button id="start-list">Create Your First List</button>
+        </div>
+      </div>
 
+      <!-- View shown when lists exist -->
+      <div id="lists-view" style="display: none;">
+        <div class="lists-container">
+          <h2>Your Lists</h2>
+          <div class="list-selector-container">
+            <select id="list-selector" class="list-dropdown">
+              <option value="">Select a list</option>
+            </select>
+            <!-- <button id="open-selected-list">Open</button> -->
+          </div>
+          <div class="list-actions">
+            <button id="start-list">Create New List</button>
+          </div>
+        </div>
+      </div>
     </main>
   </body>
 </html>
