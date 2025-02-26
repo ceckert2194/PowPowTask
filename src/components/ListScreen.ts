@@ -33,7 +33,7 @@ export class ListScreen {
       
       <div class="list-content">
         <div class="add-item-form">
-          <input type="text" id="new-item-input" placeholder="Add a new item...">
+          <input type="text" id="new-item-input" placeholder="Add a new item..." autocomplete="off">
           <button id="add-item-btn">Add</button>
         </div>
         

@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
       showLoadingView();
 
       // Use setTimeout with a promise instead of undefined sleep function
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // await new Promise(resolve => setTimeout(resolve, 2000));
       
       // First ensure the lists directory exists
       await checkListDir();
@@ -177,19 +177,21 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Event listener for the start list button (works in both views)
-  document.querySelector("#start-list")?.addEventListener("click", () => {
-    console.log('Start list button clicked');
-    new CreateListModal(async (listName: string) => {
-      console.log('Creating new list:', listName);
-      const success = await saveList(listName);
-      if (success) {
-        console.log('List created successfully');
-        await updateListsView(); // Update the view after creating a list
-        openListScreen(listName);
-      } else {
-        console.error('Failed to create list');
-        alert('Failed to create list');
-      }
+  document.querySelectorAll("#start-list").forEach(button => {
+    button.addEventListener("click", () => {
+      console.log('Start list button clicked');
+      new CreateListModal(async (listName: string) => {
+        console.log('Creating new list:', listName);
+        const success = await saveList(listName);
+        if (success) {
+          console.log('List created successfully');
+          await updateListsView(); // Update the view after creating a list
+          openListScreen(listName);
+        } else {
+          console.error('Failed to create list');
+          alert('Failed to create list');
+        }
+      });
     });
   });
 
