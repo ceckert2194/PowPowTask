@@ -185,7 +185,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Check if a list with this name already exists
         try {
-          const listFilePath = `lists/${listName}.json`;
           const exists = await checkIfListExists(listName);
           
           if (exists) {
