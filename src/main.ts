@@ -182,18 +182,55 @@ document.addEventListener('DOMContentLoaded', () => {
       console.log('Start list button clicked');
       new CreateListModal(async (listName: string) => {
         console.log('Creating new list:', listName);
-        const success = await saveList(listName);
-        if (success) {
-          console.log('List created successfully');
-          await updateListsView(); // Update the view after creating a list
-          openListScreen(listName);
-        } else {
-          console.error('Failed to create list');
-          alert('Failed to create list');
+        
+        // Check if a list with this name already exists
+        try {
+          const listFilePath = `lists/${listName}.json`;
+          const exists = await checkIfListExists(listName);
+          
+          if (exists) {
+            // Prompt user for confirmation to overwrite
+            const confirmOverwrite = confirm(`A list named "${listName}" already exists. Do you want to overwrite it with a new empty list?`);
+            if (!confirmOverwrite) {
+              console.log('User cancelled overwrite');
+              return; // Exit without creating the list
+            }
+            console.log('User confirmed overwrite');
+          }
+          
+          // Proceed with creating/overwriting the list
+          const success = await saveList(listName);
+          if (success) {
+            console.log('List created successfully');
+            await updateListsView(); // Update the view after creating a list
+            openListScreen(listName);
+          } else {
+            console.error('Failed to create list');
+            alert('Failed to create list');
+          }
+        } catch (error) {
+          console.error('Error checking if list exists:', error);
+          alert('An error occurred while creating the list');
         }
       });
     });
   });
+
+  /**
+   * Check if a list with the given name already exists
+   */
+  async function checkIfListExists(listName: string): Promise<boolean> {
+    try {
+      const files = await readDir('lists', { baseDir: BaseDirectory.AppData });
+      const listFiles = files.filter(file => file.name && file.name.endsWith('.json'));
+      
+      // Check if any of the list files match the given name
+      return listFiles.some(file => file.name === `${listName}.json`);
+    } catch (error) {
+      console.error('Error checking if list exists:', error);
+      return false; // Assume it doesn't exist if there's an error
+    }
+  }
 
   // Event listener for list selection change
   listSelector?.addEventListener("change", (event) => {

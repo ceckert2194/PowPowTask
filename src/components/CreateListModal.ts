@@ -7,7 +7,7 @@ export class CreateListModal {
     this.modal.innerHTML = `
       <div class="modal-content">
         <h2>Create New List</h2>
-        <input type="text" id="list-name-input" placeholder="Enter list name">
+        <input type="text" id="list-name-input" placeholder="Enter list name" autocomplete="off">
         <div class="modal-buttons">
           <button id="cancel-list">Cancel</button>
           <button id="confirm-list">Create</button>
