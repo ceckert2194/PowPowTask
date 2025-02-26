@@ -5,10 +5,10 @@ A desktop task management application built with Tauri, React, and TypeScript. H
 ## ✨ Features
 
 ### 📋 Task Management
-- [x] Add new tasks
+- [x] ~~Add new tasks~~
 - [ ] Edit existing tasks
-- [x] Mark tasks as complete
-- [x] Delete tasks
+- [x] ~~Mark tasks as complete~~
+- [x] ~~Delete tasks~~
 - [ ] Set task priorities
 - [ ] Task categories/tags
 - [ ] Task sorting and filtering
